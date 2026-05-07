@@ -1,0 +1,8 @@
+01;PS4;300
+02;DualShock;100
+03;PSGame;50
+04;ChStation;150
+05;PS5;2500
+06;DualSense;300
+07;Light;25
+08;Xbox;2200
