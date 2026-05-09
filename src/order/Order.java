@@ -17,23 +17,34 @@ public class Order
     private List<Product> products = new ArrayList<>();
     private double finishPrice;
 
+
     public void addProduct(Product product)
     {
         if(product == null)
         {
             return;
         }
+
         products.add(product);
+
+        finishPrice = 0;
     }
 
     public double inputCoupon(Product product, String s)
     {
+        if(finishPrice == 0)
+        {
+            finishPrice = ScoreTotalPrice();
+        }
+
         Benefit b = new Benefit(finishPrice);
 
         finishPrice = b.coupon(product, s);
 
         return finishPrice;
     }
+
+
 
     public double ScoreTotalPrice()
     {
@@ -58,19 +69,23 @@ public class Order
         {
             FileWriter writer = new FileWriter("src/order/Order.txt");
 
-            finishPrice = ScoreTotalPrice();
-            for(int i = 0; i < products.size();i++)
+            if(finishPrice == 0)
+            {
+                finishPrice = ScoreTotalPrice();
+            }
+
+            for(int i = 0; i < products.size(); i++)
             {
                 Product p = products.get(i);
-                writer.write(p.getName()+ " - "+ p.getPrice()+ "\n");
+
+                writer.write(p.getName() +" - " +p.getPrice() +"\n");
             }
 
             Benefit b = new Benefit();
+
             if(b.GratisCup(finishPrice))
             {
-                Product p = new Product("0","Cup", 0);
-                addProduct(p);
-                writer.write(p.getName()+" - "+"Gratis" +"\n");
+                writer.write("Cup - Gratis\n");
             }
 
             writer.write("Total: " + finishPrice);
@@ -85,6 +100,8 @@ public class Order
     public void removeProduct(Product product)
     {
         products.remove(product);
+
+        finishPrice = 0;
     }
 
     public void showProducts()
@@ -93,11 +110,7 @@ public class Order
         {
             Product p = products.get(i);
 
-            System.out.println(
-                    p.getCode() + " " +
-                            p.getName() + " " +
-                            p.getPrice()
-            );
+            System.out.println(p.getName() + " " + p.getPrice());
         }
     }
 
@@ -110,6 +123,18 @@ public class Order
     {
         return products;
     }
+
+    public double getFinishPrice()
+    {
+        if(finishPrice == 0)
+        {
+            finishPrice = ScoreTotalPrice();
+        }
+
+        return finishPrice;
+    }
+
+
 
 
 }

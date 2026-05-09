@@ -43,6 +43,28 @@ public class Product
     {
         return code;
     }
+    @Override
+    public boolean equals(Object o)
+    {
+        if(this == o)
+        {
+            return true;
+        }
+
+        if(o == null || getClass() != o.getClass())
+        {
+            return false;
+        }
+
+        Product product = (Product) o;
+
+        return code.equals(product.code);
+    }
+    @Override
+    public int hashCode()
+    {
+        return code.hashCode();
+    }
 
     public double getDiscountPrice()
     {

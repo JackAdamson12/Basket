@@ -8,6 +8,7 @@ import java.util.Scanner;
 
 import product.Product;
 
+
 //Создать лист продуктов
 public class Db
 {
@@ -136,6 +137,25 @@ public class Db
         } catch (IOException e) {
             throw new RuntimeException(e);
         }
+    }
+    public void ShowCoupon()
+    {
+        try {
+            File data = new File("src/db/coupons.txt");
+            Scanner scanner = new Scanner(data);
+
+            while (scanner.hasNextLine()) {
+                String line = scanner.nextLine();
+
+                System.out.println(line);
+            }
+
+            scanner.close();
+
+        } catch (FileNotFoundException e) {
+            throw new RuntimeException(e);
+        }
+
     }
 }
 

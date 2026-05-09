@@ -6,3 +6,4 @@
 06;DualSense;300
 07;Light;25
 08;Xbox;2200
+08;PC;2600.0

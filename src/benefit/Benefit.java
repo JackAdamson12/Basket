@@ -3,8 +3,10 @@ package benefit;
 
 import db.Db;
 import product.Product;
+import order.Order;
 
 import java.util.List;
+
 
 public class Benefit
 {
@@ -37,20 +39,19 @@ public class Benefit
 
         if(p.size() >= 3)
         {
-            int i = 0;
             double min = p.get(0).getPrice();
-            for(i = 1; i < p.size(); i++)
+
+            for(int i = 1; i < p.size(); i++)
             {
                 if(min > p.get(i).getPrice())
                 {
                     min = p.get(i).getPrice();
-
                 }
             }
-            p.get(i - 1).setPrice(0);
 
-            return finishPrice -= min;
+            finishPrice -= min;
         }
+
         return finishPrice;
     }
 
@@ -66,12 +67,15 @@ public class Benefit
     public double coupon(Product product, String c)
     {
         Db db = new Db();
+        Order order = new Order();
 
         if(db.CheckCoupon(c))
         {
-            double temp = product.getPrice() * 0.3;
 
+            System.out.println("Cupon is activated");
+            double temp = product.getPrice() * 0.3;
             finishPrice -= temp;
+
         }
 
         return finishPrice;

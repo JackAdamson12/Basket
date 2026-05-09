@@ -1,5 +1,5 @@
 PS5 - 2500.0
 PS4 - 300.0
-PSGame - 0.0
+PSGame - 50.0
 Cup - Gratis
-Total: 2660.0
+Total: 2657.5
