@@ -1,5 +1,7 @@
 package main;
 
+import benefit.*;
+
 import db.Db;
 import order.Order;
 import product.Product;
@@ -24,10 +26,21 @@ public class Main
         Product p2 = null;
         Product p3 = null;
 
+
+
+        DiscountPromotion discount = new DiscountPromotion();
+
+        discount.setDiscount(0.05);
+
+        order.addPromotion(discount);
+
+        order.addPromotion(new TwoPlusOne());
+
+        order.addPromotion(new CupPromotion());
+
         System.out.println("Simulation shop cart:\n");
 
-        System.out.println(
-                "/s: Show products\n" +
+        System.out.println("/s: Show products\n" +
                         "/ab: Add in basket\n" +
                         "/ac: Add coupon\n" +
                         "/rb: Remove from basket\n" +
@@ -53,7 +66,6 @@ public class Main
                 case "/s":
 
                     db.show();
-
                     break;
 
                 case "/ab":
@@ -74,11 +86,9 @@ public class Main
                     {
                         System.out.println("Product not found");
                     }
-
                     break;
 
                 case "/ac":
-
                     System.out.println("Input coupon:");
 
                     String coupon = scanner.nextLine();
@@ -93,14 +103,14 @@ public class Main
                     {
                         if(db.CheckCoupon(coupon))
                         {
-                            order.ScoreTotalPrice();
+                            Promotion couponPromotion = new CouponPromotion(product, coupon);
 
-                            double finalPrice =
-                                    order.inputCoupon(product,coupon);
+                            order.addPromotion(couponPromotion);
 
-                            System.out.println(
-                                    "New price: " + finalPrice
-                            );
+                            double finalPrice = order.ScoreTotalPrice();
+                            System.out.println("Coupon activated");
+
+                            System.out.println("New price: " + finalPrice);
                         }
                         else
                         {
@@ -111,35 +121,26 @@ public class Main
                     {
                         System.out.println("Product not found");
                     }
-
                     break;
 
-
                 case "/sp":
-
                     order.sortProducts(new ProductPriceComparator());
 
                     System.out.println("Sorted by price");
-
                     break;
 
                 case "/sn":
-
                     order.sortProducts(new ProductNameComparator());
 
                     System.out.println("Sorted by name");
-
                     break;
 
                 case "/rb":
-
                     System.out.println("Input product name to remove:");
 
-                    String removeName =
-                            scanner.nextLine();
+                    String removeName = scanner.nextLine();
 
-                    Product removeProduct =
-                            db.getByName(removeName);
+                    Product removeProduct = db.getByName(removeName);
 
                     if(removeProduct != null)
                     {
@@ -151,29 +152,21 @@ public class Main
                     {
                         System.out.println("Product not found");
                     }
-
                     break;
 
-
-
                 case "/o":
-
                     order.showProducts();
 
-                    System.out.println("Total: " + order.getFinishPrice());
-
+                    System.out.println("Total: " + order.ScoreTotalPrice());
                     break;
 
                 case "/save":
-
                     order.saveOrder();
 
                     System.out.println("Order saved");
-
                     break;
 
                 case "/q":
-
                     p1 = db.getByName("PS5");
                     p2 = db.getByName("PS4");
                     p3 = db.getByName("PSGame");
@@ -183,11 +176,12 @@ public class Main
                     order.addProduct(p3);
 
                     System.out.println("Debug products added");
+
                     break;
 
                 case "/show":
-                    System.out.println(
-                            "/s: Show products\n" +
+
+                    System.out.println("/s: Show products\n" +
                                     "/ab: Add in basket\n" +
                                     "/ac: Add coupon\n" +
                                     "/rb: Remove from basket\n" +
@@ -198,55 +192,70 @@ public class Main
                                     "/q: Quick Debug\n" +
                                     "/e: Finish program\n"+
                                     "/show: Show menu\n");
-                            break;
+
+                    break;
 
                 case "/admin":
-
                     while(true)
                     {
                         System.out.println("/a Add new coupon\n"+
-                                "/p Add new product\n"+
-                                "/sm Show menu\n"+
-                                "/sc Show coupons\n"+
-                                "/e Exit from admin\n");
+                                        "/p Add new product\n"+
+                                        "/sm Show menu\n"+
+                                        "/sc Show coupons\n"+
+                                        "/e Exit from admin\n");
 
                         String adm = scanner.nextLine();
+
                         if(adm.equals("/e"))
                         {
                             break;
                         }
-                        switch (adm) {
+
+                        switch (adm)
+                        {
                             case "/a":
                                 System.out.println("Input data:");
+
                                 String cpn = scanner.nextLine();
+
                                 db.NewCoupon(cpn);
                                 break;
+
                             case "/p":
                                 System.out.println("Code:");
+
                                 String code = scanner.nextLine();
+
                                 System.out.println("Name");
+
                                 String name = scanner.nextLine();
+
                                 System.out.println("Price:");
+
                                 double price = scanner.nextDouble();
+
                                 scanner.nextLine();
-                                db.input(code,name,price);
+
+                                db.input(code, name, price);
                                 break;
+
                             case "/sm":
                                 db.show();
                                 break;
+
                             case "/sc":
                                 db.ShowCoupon();
                                 break;
+
                             default:
+
                                 System.out.println("Wrong command");
                         }
-
-
                     }
+
                     break;
 
                 default:
-
                     System.out.println("Wrong command");
             }
         }
@@ -257,10 +266,10 @@ public class Main
 
         if(expensive != null)
         {
-            System.out.println("Most expensive: " +expensive.getName());
+            System.out.println("Most expensive: " + expensive.getName());
         }
 
-        List<Product> topProducts =service.getNMostExpensive(order.getProducts(),2);
+        List<Product> topProducts = service.getNMostExpensive(order.getProducts(), 2);
 
         System.out.println("Top expensive products:");
 
@@ -270,4 +279,3 @@ public class Main
         }
     }
 }
-

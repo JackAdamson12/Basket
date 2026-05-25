@@ -1,9 +1,7 @@
 package order;
 
-import benefit.Benefit;
+import benefit.Promotion;
 import product.Product;
-import sort.ProductNameComparator;
-import sort.ProductPriceComparator;
 
 import java.io.FileWriter;
 import java.io.IOException;
@@ -11,12 +9,13 @@ import java.util.ArrayList;
 import java.util.Comparator;
 import java.util.List;
 
-
 public class Order
 {
     private List<Product> products = new ArrayList<>();
-    private double finishPrice;
 
+    private List<Promotion> promotions = new ArrayList<>();
+
+    private double finishPrice;
 
     public void addProduct(Product product)
     {
@@ -30,38 +29,48 @@ public class Order
         finishPrice = 0;
     }
 
-    public double inputCoupon(Product product, String s)
+    public void removeProduct(Product product)
     {
-        if(finishPrice == 0)
-        {
-            finishPrice = ScoreTotalPrice();
-        }
+        products.remove(product);
 
-        Benefit b = new Benefit(finishPrice);
-
-        finishPrice = b.coupon(product, s);
-
-        return finishPrice;
+        finishPrice = 0;
     }
 
+    public void addPromotion(Promotion promotion)
+    {
+        if(promotion == null)
+        {
+            return;
+        }
 
+        promotions.add(promotion);
+
+        finishPrice = 0;
+    }
 
     public double ScoreTotalPrice()
     {
         double total = 0;
 
-        for(int i = 0; i < products.size(); i++)
+        if(products.isEmpty())
         {
-            Product p = products.get(i);
+            return 0;
+        }
+
+        for(Product p : products)
+        {
             total += p.getPrice();
         }
-        Benefit b = new Benefit(total);
-        finishPrice = b.znizka(total);
-        finishPrice = b.TwoPlusOne(products);
+
+        for(Promotion promotion : promotions)
+        {
+            total = promotion.apply(products, total);
+        }
+
+        finishPrice = total;
 
         return finishPrice;
     }
-
 
     public void saveOrder()
     {
@@ -74,43 +83,35 @@ public class Order
                 finishPrice = ScoreTotalPrice();
             }
 
-            for(int i = 0; i < products.size(); i++)
+            for(Product p : products)
             {
-                Product p = products.get(i);
-
-                writer.write(p.getName() +" - " +p.getPrice() +"\n");
-            }
-
-            Benefit b = new Benefit();
-
-            if(b.GratisCup(finishPrice))
-            {
-                writer.write("Cup - Gratis\n");
+                writer.write(p.getName() + " - " + p.getPrice() + "\n");
             }
 
             writer.write("Total: " + finishPrice);
 
             writer.close();
         }
-        catch (IOException e)
+        catch(IOException e)
         {
             throw new RuntimeException(e);
         }
     }
-    public void removeProduct(Product product)
-    {
-        products.remove(product);
-
-        finishPrice = 0;
-    }
 
     public void showProducts()
     {
-        for(int i = 0; i < products.size(); i++)
+        if(products.isEmpty())
         {
-            Product p = products.get(i);
+            System.out.println(
+                    "Basket is empty"
+            );
 
-            System.out.println(p.getName() + " " + p.getPrice());
+            return;
+        }
+
+        for(Product p : products)
+        {
+            System.out.println(p.getCode() + " " + p.getName() + " " + p.getPrice());
         }
     }
 
@@ -126,15 +127,6 @@ public class Order
 
     public double getFinishPrice()
     {
-        if(finishPrice == 0)
-        {
-            finishPrice = ScoreTotalPrice();
-        }
-
         return finishPrice;
     }
-
-
-
-
 }
